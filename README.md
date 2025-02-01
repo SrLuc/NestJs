@@ -1,11 +1,10 @@
-# NestJS Study Notes
+# Bem-vindo ao Projeto!
 
-## Overview
-This repository contains notes and basic configurations related to my studies in NestJS. The goal is to document my learning process and useful commands for future reference.
+Este é o repositório principal do projeto. Para mais informações, consulte os tutoriais abaixo:
 
+## 📖 Tutoriais
 
-## Configuration
-
-
-## References
-- [NestJS Official Documentation](https://docs.nestjs.com/)
+- [Step 1: Installation](Tutorial/1.Installation.md)
+- [Step 2: Setup](Tutorial/2.Setup.md)
+- [Step 3: Modules](Tutorial/3.Modules.md)
+- [Step 4: Commands](Tutorial/4.Commands.md)
