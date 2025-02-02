@@ -8,22 +8,31 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  lastName  String?
-  hash      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int        @id @default(autoincrement()) 
+  email     String     @unique 
+  password  String // Senha do usuário (deveria ser armazenada de forma segura, como hash)
+
+  bookmarks Bookmark[] // Relacionamento: Um usuário pode ter vários bookmarks
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt 
+
+  @@map("users") // Mapeia essa tabela para "users" no banco de dados
 }
 
 model Bookmark {
-  id          Int      @id @default(autoincrement())
-  title       String
+  id          Int      @id @default(autoincrement()) 
+  title       String 
   url         String
-  description String?
-  createdAt   DateTime @default(now())
+  description String? 
+
+  createdAt   DateTime @default(now()) 
   updatedAt   DateTime @updatedAt
+
+  userId      Int // Chave estrangeira referenciando um usuário
+  user        User     @relation(fields: [userId], references: [id]) // Relacionamento: Cada bookmark pertence a um usuário
+
+  @@map("bookmarks") // Mapeia essa tabela para "bookmarks" no banco de dados
 }
 
 model Address {
