@@ -6,10 +6,16 @@ import {
 import { PrismaService } from "src/prisma/prisma.service";
 import { AuthDto } from "./DTO/index";
 import * as argon from "argon2";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable({})
 export class AuthService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService
+  ) {}
 
   //create new user
   async signIn(dto: AuthDto) {
@@ -26,7 +32,7 @@ export class AuthService {
       });
 
       //return user
-      return user;
+      return this.signToken(user.id, user.email);
     } catch (e) {
       if (e.code === "P2002") {
         throw new BadRequestException("Email already exists");
@@ -45,7 +51,7 @@ export class AuthService {
       });
 
       //if user not found
-      if (!user) throw new ForbiddenException("Credentials Incorrect"); 
+      if (!user) throw new ForbiddenException("Credentials Incorrect");
 
       //compare password
       const isValid = await argon.verify(user.password, dto.password);
@@ -58,5 +64,29 @@ export class AuthService {
     } catch (e) {
       throw new BadRequestException("User not found");
     }
+  }
+
+  async signToken(
+    useId: number,
+    email: string
+  ): Promise<{ acess_token: string }> {
+    // payload to token
+    const payload = {
+      userId: useId, // Inclui o ID do usuário no payload do token
+      email: email, // Inclui o email do usuário no payload do token
+    };
+
+    // secret key
+    const secret = this.config.get("JWT_SECRET"); // Obtém a chave secreta do arquivo .env
+
+    // generate token
+    const token = this.jwt.sign(payload, {
+      secret, // Usa a chave secreta para assinar o token
+      expiresIn: "15m", // Define o tempo de expiração do token (15 minutos)
+    });
+
+    return {
+      acess_token: token,
+    };
   }
 }
